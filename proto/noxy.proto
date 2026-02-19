@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package noxy.push;
+
+service PushService {
+  rpc PushNotification (PushNotificationRequest) returns (PushResponse);
+  rpc GetQuota (GetQuotaRequest) returns (GetQuotaResponse);
+  rpc GetIdentityDevices (GetIdentityDevicesRequest) returns (GetIdentityDevicesResponse);
+}
+
+message PushNotificationRequest {
+  string request_id = 1;
+  bytes ciphertext = 2;
+  uint32 ttl_seconds = 3;
+  string target_device_id = 4;
+  bytes kyber_ct = 5;
+  bytes nonce = 6;
+}
+
+enum DeliveryStatus {
+  DELIVERED = 0;
+  QUEUED = 1;
+  NO_DEVICES = 2;
+  REJECTED = 3;
+  ERROR = 4;
+}
+
+message PushResponse {
+  DeliveryStatus status = 1;
+  string request_id = 2;
+}
+
+message GetQuotaRequest {
+  string request_id = 1;
+}
+
+message GetQuotaResponse {
+  string request_id = 1;
+  string app_name = 2;
+  uint64 quota_total = 3;
+  uint64 quota_remaining = 4;
+  QuotaStatus status = 5;
+}
+
+enum QuotaStatus {
+  QUOTA_ACTIVE = 0;
+  QUOTA_SUSPENDED = 1;
+  QUOTA_DELETED = 2;
+}
+
+message GetIdentityDevicesRequest {
+  string request_id = 1;
+  string identity_id = 2;  // wallet address
+}
+
+message IdentityDevice {
+  string device_id = 1;
+  bytes public_key = 2;
+  bytes pq_public_key = 3;
+}
+
+message GetIdentityDevicesResponse {
+  string request_id = 1;
+  repeated IdentityDevice devices = 2;
+}

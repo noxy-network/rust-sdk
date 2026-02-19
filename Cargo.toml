@@ -1,0 +1,33 @@
+[package]
+name = "noxy-sdk"
+version = "1.0.0"
+edition = "2021"
+description = "Backend SDK for Rust servers to integrate with the Noxy push notification network"
+authors = ["Noxy Network"]
+license = "MIT"
+repository = "https://github.com/noxy-network/rust-sdk"
+keywords = ["noxy", "push-notifications", "web3", "post-quantum", "grpc"]
+categories = ["cryptography", "network-programming"]
+
+[dependencies]
+tonic = { version = "0.12", features = ["tls", "tls-roots"] }
+prost = "0.13"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync"] }
+pqcrypto-kyber = "0.8"
+pqcrypto-traits = "0.3"
+aes-gcm = "0.10"
+hkdf = "0.12"
+sha2 = "0.10"
+rand = "0.8"
+uuid = { version = "1", features = ["v4"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tower = { version = "0.5", features = ["timeout"] }
+tower-service = "0.3"
+http = "0.2"
+bytes = "1"
+tracing = "0.1"
+
+[build-dependencies]
+tonic-build = "0.12"
+protoc-bin-vendored = "3"
