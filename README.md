@@ -1,4 +1,4 @@
-# @noxy-network/rust-sdk
+# 📦 @noxy-network/rust-sdk
 
 Backend SDK for Rust servers to integrate with the [Noxy](https://noxy.network) push notification network. Send encrypted push notifications to Web3 wallet addresses via the Noxy relay infrastructure.
 
@@ -32,7 +32,7 @@ Communication with the Noxy relay is performed over **gRPC** using Protocol Buff
 - Rust **>= 1.70**
 - Tokio async runtime
 
-## Installation
+## 🚀 Installation
 
 Add to your `Cargo.toml`:
 
@@ -41,7 +41,7 @@ Add to your `Cargo.toml`:
 noxy-sdk = "1.0"
 ```
 
-## Quick Start
+## 🛠 Quick Start
 
 ```rust
 use noxy_sdk::{init_noxy_client, NoxyConfig};
@@ -49,7 +49,7 @@ use noxy_sdk::{init_noxy_client, NoxyConfig};
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let config = NoxyConfig {
-        endpoint: "https://relay.noxy.network:443".to_string(),
+        endpoint: "https://relay.noxy.network".to_string(),
         auth_token: "your-api-token".to_string(),
         notification_ttl_seconds: 3600,
     };
@@ -80,7 +80,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 
 | Option | Type | Required | Description |
 |--------|------|----------|-------------|
-| `endpoint` | `String` | Yes | Noxy relay gRPC endpoint (e.g. `https://relay.noxy.network:443`). Scheme is stripped; TLS is used by default. |
+| `endpoint` | `String` | Yes | Noxy relay gRPC endpoint (e.g. `https://relay.noxy.network`). Scheme is stripped; TLS is used by default. |
 | `auth_token` | `String` | Yes | Bearer token for relay authentication. Sent in the `Authorization` header on every request. |
 | `notification_ttl_seconds` | `u32` | Yes | Time-to-live for notifications in seconds. |
 
@@ -118,6 +118,6 @@ Returns quota usage for your application.
 3. **Payload encryption**: The notification payload (JSON) is encrypted with AES-256-GCM. The ciphertext includes the GCM auth tag appended for integrity verification.
 4. **Transmission**: Only `kyber_ct`, `nonce`, and `ciphertext` are sent to the relay. The relay cannot decrypt; only the target device (with its secret key) can decrypt.
 
-## License
+## 📄 License
 
 MIT
