@@ -1,4 +1,4 @@
-use crate::transport::{proto, PushServiceClient};
+use crate::transport::{proto, AgentServiceClient};
 use crate::types::NoxyIdentityDevice;
 use tonic::metadata::AsciiMetadataValue;
 use tonic::Request;
@@ -14,7 +14,7 @@ impl IdentityService {
 
     pub(crate) async fn get_devices(
         &self,
-        client: &mut PushServiceClient<Channel>,
+        client: &mut AgentServiceClient<Channel>,
         identity_id: &str,
         auth_value: &AsciiMetadataValue,
     ) -> Result<Vec<NoxyIdentityDevice>, tonic::Status> {

@@ -1,12 +1,12 @@
 [package]
 name = "noxy-sdk"
-version = "1.0.0"
+version = "2.0.0"
 edition = "2021"
-description = "Backend SDK for Rust servers to integrate with the Noxy push notification network"
+description = "Decision Layer SDK for AI agents. Encrypted actionable decisions over gRPC."
 authors = ["Noxy Network"]
 license = "MIT"
 repository = "https://github.com/noxy-network/rust-sdk"
-keywords = ["noxy", "push-notifications", "web3", "post-quantum", "grpc"]
+keywords = ["noxy", "ai-agents", "web3", "post-quantum", "grpc"]
 categories = ["cryptography", "network-programming"]
 
 [dependencies]

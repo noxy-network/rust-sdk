@@ -1,20 +1,23 @@
 syntax = "proto3";
 
-package noxy.push;
+package noxy.agent;
 
-service PushService {
-  rpc PushNotification (PushNotificationRequest) returns (PushResponse);
+// AI agent → relay: route encrypted human-in-the-loop decisions to wallet devices.
+service AgentService {
+  rpc RouteDecision (RouteDecisionRequest) returns (DeliveryOutcome);
+  rpc GetDecisionOutcome (GetDecisionOutcomeRequest) returns (GetDecisionOutcomeResponse);
   rpc GetQuota (GetQuotaRequest) returns (GetQuotaResponse);
   rpc GetIdentityDevices (GetIdentityDevicesRequest) returns (GetIdentityDevicesResponse);
 }
 
-message PushNotificationRequest {
+message RouteDecisionRequest {
   string request_id = 1;
   bytes ciphertext = 2;
   uint32 ttl_seconds = 3;
   string target_device_id = 4;
   bytes kyber_ct = 5;
   bytes nonce = 6;
+  string decision_id = 7;
 }
 
 enum DeliveryStatus {
@@ -25,9 +28,29 @@ enum DeliveryStatus {
   ERROR = 4;
 }
 
-message PushResponse {
+message DeliveryOutcome {
   DeliveryStatus status = 1;
   string request_id = 2;
+  string decision_id = 3;
+}
+
+enum DecisionOutcome {
+  DECISION_OUTCOME_PENDING = 0;
+  DECISION_OUTCOME_APPROVED = 1;
+  DECISION_OUTCOME_REJECTED = 2;
+  DECISION_OUTCOME_EXPIRED = 3;
+}
+
+message GetDecisionOutcomeRequest {
+  string request_id = 1;
+  string decision_id = 2;
+  string identity_id = 3;
+}
+
+message GetDecisionOutcomeResponse {
+  string request_id = 1;
+  bool pending = 2;
+  DecisionOutcome outcome = 3;
 }
 
 message GetQuotaRequest {

@@ -1,13 +1,12 @@
-//! Type definitions matching the proto and SDK API.
-
+//! Type definitions matching `agent.proto` and the SDK API.
 
 /// EVM wallet address in 0x format.
 pub type NoxyIdentityAddress = String;
 
-/// Delivery status for a push notification.
+/// Relay-side delivery status after `RouteDecision` (matches proto `DeliveryStatus`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(i32)]
-pub enum NoxyPushDeliveryStatus {
+pub enum NoxyDeliveryStatus {
     Delivered = 0,
     Queued = 1,
     NoDevices = 2,
@@ -15,7 +14,7 @@ pub enum NoxyPushDeliveryStatus {
     Error = 4,
 }
 
-impl From<i32> for NoxyPushDeliveryStatus {
+impl From<i32> for NoxyDeliveryStatus {
     fn from(v: i32) -> Self {
         match v {
             0 => Self::Delivered,
@@ -28,11 +27,43 @@ impl From<i32> for NoxyPushDeliveryStatus {
     }
 }
 
-/// Response for a push notification send.
+/// Response for a single `RouteDecision` delivery to one device.
 #[derive(Debug, Clone)]
-pub struct NoxyPushResponse {
-    pub status: NoxyPushDeliveryStatus,
+pub struct NoxyDeliveryOutcome {
+    pub status: NoxyDeliveryStatus,
     pub request_id: String,
+    /// Present when the relay tracks human resolution; use with `get_decision_outcome` / `wait_for_decision_outcome`.
+    pub decision_id: String,
+}
+
+/// Human-in-the-loop resolution (matches proto `DecisionOutcome`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(i32)]
+pub enum NoxyHumanDecisionOutcome {
+    Pending = 0,
+    Approved = 1,
+    Rejected = 2,
+    Expired = 3,
+}
+
+impl From<i32> for NoxyHumanDecisionOutcome {
+    fn from(v: i32) -> Self {
+        match v {
+            0 => Self::Pending,
+            1 => Self::Approved,
+            2 => Self::Rejected,
+            3 => Self::Expired,
+            _ => Self::Pending,
+        }
+    }
+}
+
+/// Result of polling `GetDecisionOutcome`.
+#[derive(Debug, Clone)]
+pub struct NoxyGetDecisionOutcomeResponse {
+    pub request_id: String,
+    pub pending: bool,
+    pub outcome: NoxyHumanDecisionOutcome,
 }
 
 /// Quota status for the application.

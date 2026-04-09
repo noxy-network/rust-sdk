@@ -1,4 +1,4 @@
-use crate::transport::{proto, PushServiceClient};
+use crate::transport::{proto, AgentServiceClient};
 use crate::types::{NoxyGetQuotaResponse, NoxyQuotaStatus};
 use tonic::metadata::AsciiMetadataValue;
 use tonic::Request;
@@ -14,7 +14,7 @@ impl QuotaService {
 
     pub(crate) async fn get(
         &self,
-        client: &mut PushServiceClient<Channel>,
+        client: &mut AgentServiceClient<Channel>,
         auth_value: &AsciiMetadataValue,
     ) -> Result<NoxyGetQuotaResponse, tonic::Status> {
         let req = proto::GetQuotaRequest {

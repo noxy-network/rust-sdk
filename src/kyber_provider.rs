@@ -1,4 +1,4 @@
-//! Kyber768 post-quantum key encapsulation for notification encryption.
+//! Kyber768 post-quantum key encapsulation for decision payload encryption.
 
 use pqcrypto_kyber::kyber768;
 use pqcrypto_traits::kem::{Ciphertext, PublicKey, SharedSecret};
