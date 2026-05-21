@@ -1,6 +1,6 @@
 # 📦 @noxy-network/rust-sdk
 
-SDK for **AI agent runtimes** integrating with the [Noxy](https://noxy.network) **Decision Layer**: send encrypted, **actionable** decision payloads (tool proposals, approvals, next-step hints) to registered agent devices over gRPC.
+SDK for **AI agent backends** integrating with [Noxy](https://noxy.network) **human-in-the-loop** guardrails: send encrypted, **actionable** prompts (tool proposals, approvals, next-step hints) to registered user devices over gRPC so **users can take decisions** before work proceeds.
 
 **Before you integrate:** Create your app at [noxy.network](https://noxy.network). When the app is created, you receive an **app id** and an **app token** (auth token). This Rust SDK authenticates with the relay using the **app token** (`auth_token` in `NoxyConfig`). The **app id** is used by client SDKs (browser, iOS, Android, Telegram bot), not as the bearer token here.
 
@@ -10,7 +10,7 @@ Use this SDK to:
 
 - **Route decisions** to devices bound to a Web3 identity (`0x…` address) — structured JSON you define (e.g. proposed tool calls, parameters, user-visible summaries).
 - **Receive delivery outcomes** from the relay (`DELIVERED`, `QUEUED`, `NO_DEVICES`, etc.) plus a **`decision_id`** when the relay accepts the route.
-- **Wait for human-in-the-loop resolution** — the wallet user **approves**, **rejects**, or the decision **expires**. The usual path is **`send_decision_and_wait_for_outcome`** (route + poll in one step). Use `get_decision_outcome` / `wait_for_decision_outcome` alone for finer control.
+- **Wait for human-in-the-loop resolution** — **users take decisions** on-device and **decision outcomes** return via polling; prompts can **expire** if unanswered. The usual path is **`send_decision_and_wait_for_outcome`** (route + poll in one step). Use `get_decision_outcome` / `wait_for_decision_outcome` alone for finer control.
 - **Query quota** for your agent application on the relay.
 - **Resolve identity devices** so each device receives its own encrypted copy of the decision.
 
@@ -25,9 +25,9 @@ The **encrypted path** covers **SDK → relay** and **relay → device**: decisi
 ```
                       Ciphertext only (E2E)                  Ciphertext only (E2E)
 ┌──────────────────┐     gRPC (TLS)      ┌─────────────────┐     gRPC (TLS)       ┌──────────────────┐
-│  AI agent /      │ ◄─────────────────► │  Noxy relay     │ ◄──────────────────► │  Agent device    │
-│  orchestrator    │   RouteDecision     │  (Decision      │                      │  (human approves │
-│  (this SDK)      │   GetDecisionOutcome│   Layer)        │                      │   or rejects)    │
+│  AI agent /      │ ◄─────────────────► │  Noxy relay     │ ◄──────────────────► │  User device     │
+│  orchestrator    │   RouteDecision     │  human-in-the-  │                      │  (users take     │
+│  (this SDK)      │   GetDecisionOutcome│  loop relay     │                      │   decisions)     │
 │                  │   GetQuota          │   forwards only │                      │   decrypts       │
 │                  │   GetIdentityDevices│                 │                      │                  │
 └──────────────────┘                     └─────────────────┘                      └──────────────────┘
@@ -42,14 +42,14 @@ The **encrypted path** covers **SDK → relay** and **relay → device**: decisi
 
 ```toml
 [dependencies]
-noxy-sdk = "2.0"
+noxy-sdk = "2.1"
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 serde_json = "1"
 ```
 
 ## Quick start
 
-Route a decision and wait until the user **approves**, **rejects**, or the decision **expires** (one call):
+Route encrypted prompts and wait until **users take decisions** or the prompt **expires** (one call):
 
 ```rust
 use noxy_sdk::{init_noxy_agent_client, NoxyConfig, NoxyHumanDecisionOutcome};

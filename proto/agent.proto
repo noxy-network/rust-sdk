@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package noxy.agent;
 
-// AI agent → relay: route encrypted human-in-the-loop decisions to wallet devices.
 service AgentService {
   rpc RouteDecision (RouteDecisionRequest) returns (DeliveryOutcome);
   rpc GetDecisionOutcome (GetDecisionOutcomeRequest) returns (GetDecisionOutcomeResponse);
@@ -41,12 +40,6 @@ enum DecisionOutcome {
   DECISION_OUTCOME_EXPIRED = 3;
 }
 
-message GetDecisionOutcomeRequest {
-  string request_id = 1;
-  string decision_id = 2;
-  string identity_id = 3;
-}
-
 message GetDecisionOutcomeResponse {
   string request_id = 1;
   bool pending = 2;
@@ -71,9 +64,15 @@ enum QuotaStatus {
   QUOTA_DELETED = 2;
 }
 
+message GetDecisionOutcomeRequest {
+  string request_id = 1;
+  string decision_id = 2;
+  string identity_id = 3;
+}
+
 message GetIdentityDevicesRequest {
   string request_id = 1;
-  string identity_id = 2;  // wallet address
+  string identity_id = 2;
 }
 
 message IdentityDevice {
