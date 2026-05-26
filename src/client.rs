@@ -9,7 +9,7 @@ use crate::transport::proto;
 use crate::transport::AgentServiceClient;
 use crate::types::{
     NoxyDeliveryOutcome, NoxyGetDecisionOutcomeResponse, NoxyGetQuotaResponse, NoxyHumanDecisionOutcome,
-    NoxyIdentityAddress,
+    NoxyIdentityId,
 };
 use tonic::metadata::AsciiMetadataValue;
 use tonic::transport::Channel;
@@ -55,7 +55,7 @@ impl NoxyAgentClient {
     /// Uses one client-generated `decision_id` (UUID) for the whole batch so every device shares the same logical decision.
     pub async fn send_decision<T>(
         &self,
-        identity_address: NoxyIdentityAddress,
+        identity_id: NoxyIdentityId,
         actionable_decision: &T,
     ) -> Result<Vec<NoxyDeliveryOutcome>, Box<dyn std::error::Error + Send + Sync>>
     where
@@ -64,7 +64,7 @@ impl NoxyAgentClient {
         let mut client = self.create_client();
         let devices = self
             .identity_service
-            .get_devices(&mut client, &identity_address, &self.auth_value)
+            .get_devices(&mut client, &identity_id, &self.auth_value)
             .await?;
         self.decision_service
             .send(
@@ -144,7 +144,7 @@ impl NoxyAgentClient {
     /// [`send_decision`] then [`wait_for_decision_outcome`] using the first delivery with a non-empty `decision_id`.
     pub async fn send_decision_and_wait_for_outcome<T>(
         &self,
-        identity_address: NoxyIdentityAddress,
+        identity_id: NoxyIdentityId,
         actionable_decision: &T,
         options: Option<SendDecisionAndWaitOptions>,
     ) -> Result<NoxyGetDecisionOutcomeResponse, Box<dyn std::error::Error + Send + Sync>>
@@ -152,7 +152,7 @@ impl NoxyAgentClient {
         T: serde::Serialize,
     {
         let deliveries = self
-            .send_decision(identity_address.clone(), actionable_decision)
+            .send_decision(identity_id.clone(), actionable_decision)
             .await?;
         let with_id = deliveries.iter().find(|d| !d.decision_id.is_empty());
         let Some(d) = with_id else {
@@ -161,7 +161,7 @@ impl NoxyAgentClient {
         let o = options.unwrap_or_default();
         self.wait_for_decision_outcome(WaitForDecisionOutcomeOptions {
             decision_id: d.decision_id.clone(),
-            identity_id: identity_address,
+            identity_id,
             initial_poll_interval_ms: o.initial_poll_interval_ms,
             max_poll_interval_ms: o.max_poll_interval_ms,
             max_wait_ms: o.max_wait_ms,

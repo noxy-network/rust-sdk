@@ -24,7 +24,7 @@ pub use decision_outcome::{
 };
 pub use types::{
     NoxyDeliveryOutcome, NoxyDeliveryStatus, NoxyGetDecisionOutcomeResponse, NoxyGetQuotaResponse,
-    NoxyHumanDecisionOutcome, NoxyIdentityDevice, NoxyQuotaStatus,
+    NoxyHumanDecisionOutcome, NoxyIdentityDevice, NoxyIdentityId, NoxyQuotaStatus,
 };
 
 /// Initialize the Noxy Decision Layer client (async: establishes the gRPC connection).

@@ -1,7 +1,7 @@
 //! Route a decision and print quota.
 //!
 //! Run:
-//!   NOXY_APP_TOKEN=<your bearer token> NOXY_TARGET_ADDRESS=<0x wallet address> cargo run --example basic
+//!   NOXY_APP_TOKEN=<token> NOXY_IDENTITY_ID=<logical user id> cargo run --example basic
 
 use noxy_sdk::{init_noxy_agent_client, NoxyConfig, NoxyHumanDecisionOutcome};
 const NOXY_ENDPOINT: &str = "https://relay.noxy.network";
@@ -9,7 +9,7 @@ const NOXY_ENDPOINT: &str = "https://relay.noxy.network";
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let auth_token = std::env::var("NOXY_APP_TOKEN").expect("NOXY_APP_TOKEN must be set");
-    let target_address = std::env::var("NOXY_TARGET_ADDRESS").expect("NOXY_TARGET_ADDRESS must be set");
+    let identity_id = std::env::var("NOXY_IDENTITY_ID").expect("NOXY_IDENTITY_ID must be set");
 
     let config = NoxyConfig {
         endpoint: NOXY_ENDPOINT.to_string(),
@@ -33,9 +33,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         "summary": "[RUST] The agent is requesting approval to send 1 wei to the burn address.",
     });
 
-    println!("Routing decision to {}...", target_address);
+    println!("Routing decision to {}...", identity_id);
     let resolution = client
-        .send_decision_and_wait_for_outcome(target_address, &actionable, None)
+        .send_decision_and_wait_for_outcome(identity_id, &actionable, None)
         .await?;
 
     println!(

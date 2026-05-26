@@ -1,7 +1,7 @@
 //! Type definitions matching `agent.proto` and the SDK API.
 
-/// EVM wallet address in 0x format.
-pub type NoxyIdentityAddress = String;
+/// Relay `identity_id`: logical user identity (wallet `0x…`, email, phone, app `user_id`, …)—must match device registration.
+pub type NoxyIdentityId = String;
 
 /// Relay-side delivery status after `RouteDecision` (matches proto `DeliveryStatus`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
